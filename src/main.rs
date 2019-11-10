@@ -1,10 +1,30 @@
 use std::io;
 use std::cmp::Ordering;
 use rand::Rng;
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+
+fn index() -> impl Responder {
+    let my_string = String::from("Rust Async");
+
+    // first_word works on slices of `String`s
+    let _word = first_word(&my_string[..]);
+
+    let my_string_literal = "Rust Async";
+
+    // first_word works on slices of string literals
+    let _word = first_word(&my_string_literal[..]);
+
+    // Because string literals *are* string slices already,
+    // this works too, without the slice syntax!
+    let _word = first_word(my_string_literal);
+    println!(" word: {}", _word);
+
+    HttpResponse::Ok().body("HELLO WORLD!")
+}
 
 fn guess_num(){
-    println!("Guess the number!");
 
+    println!("Guess the number!");
     let secret_number = rand::thread_rng().gen_range(1, 101);
 
     loop{
@@ -682,8 +702,9 @@ fn do_struct(){
 //    );
 //    println!("rect1: {:?}", &rect1);
 }
-fn main() {
-    //mut and default immutable
+
+fn do_init(){
+     //mut and default immutable
     let mut i = 0;
     println!("init i :{}", i);
     i = 100;
@@ -702,4 +723,17 @@ fn main() {
     // floating-point numbers
     do_float();
     //guess_num()
+}
+
+fn main() {
+   do_init();
+   HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(index))
+    })
+        .bind("127.0.0.1:8080")
+        .unwrap()
+        .run()
+        .unwrap();
+    println!("exit");
 }
