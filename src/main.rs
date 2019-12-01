@@ -710,6 +710,9 @@ fn do_init(){
     i = 100;
     println!("change i: {}", i);
 
+    // const declare
+    const MAX_POINTS: u32 = 100_000;
+    println!("constant variable MAX_POINT: {}", MAX_POINTS);
     //shadowing
     let x = 5;
     let x = x + 1;
