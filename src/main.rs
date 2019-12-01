@@ -634,7 +634,7 @@ fn do_float(){
     }
 
     for number in (1..4).rev() {
-        print!("{}!", number);
+        print!("{}, ", number);
     }
 
     let s = String::from("The Rust Programming Language");
