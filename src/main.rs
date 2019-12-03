@@ -728,8 +728,60 @@ fn do_init(){
     //guess_num()
 }
 
+use std::fmt;
+
+
+fn show_item<T: fmt::Display>(item: T) {
+    println!("Item: {}", item);
+}
+
+struct CanDisplay;
+
+impl fmt::Display for CanDisplay {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "CanDisplay")
+    }
+}
+
+struct AlsoDisplay;
+
+impl fmt::Display for AlsoDisplay {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "AlsoDisplay")
+    }
+}
+
+//Static Dispatch
+fn do_static_dispatch(){
+    let a: CanDisplay = CanDisplay;
+    let b: AlsoDisplay = AlsoDisplay;
+
+    show_item(a);    // stdout `Item: CanDisplay`
+    show_item(b);    // stdout `Item: AlsoDisplay`
+}
+
+
+
+fn get_numbers(a: u32, b: u32) -> impl Iterator<Item = u32> {
+    (a..b).filter(|x| x % 100 == 0)
+}
+
+//Dynamic Dispatch
+// impl trait
+fn do_advanced_trait(){
+    for n in get_numbers(100, 1001) {
+        print!("{} \t", n);
+    }
+}
+
+
 fn main() {
    do_init();
+   do_static_dispatch();
+   do_advanced_trait();
+
+
+   println!("\nStartup Web Server...");
    HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(index))
