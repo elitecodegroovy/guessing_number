@@ -19,11 +19,10 @@ fn index() -> impl Responder {
     let _word = first_word(my_string_literal);
     println!(" word: {}", _word);
 
-    HttpResponse::Ok().body("HELLO WORLD!")
+    HttpResponse::Ok().body(_word)
 }
 
 fn guess_num(){
-
     println!("Guess the number!");
     let secret_number = rand::thread_rng().gen_range(1, 101);
 
@@ -786,7 +785,7 @@ fn main() {
         App::new()
             .route("/", web::get().to(index))
     })
-        .bind("127.0.0.1:8080")
+        .bind("0.0.0.0:8080")
         .unwrap()
         .run()
         .unwrap();
