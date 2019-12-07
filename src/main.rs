@@ -750,7 +750,7 @@ impl fmt::Display for AlsoDisplay {
     }
 }
 
-//Static Dispatch
+//1. Static Dispatch
 fn do_static_dispatch(){
     let a: CanDisplay = CanDisplay;
     let b: AlsoDisplay = AlsoDisplay;
@@ -765,7 +765,7 @@ fn get_numbers(a: u32, b: u32) -> impl Iterator<Item = u32> {
     (a..b).filter(|x| x % 100 == 0)
 }
 
-//Dynamic Dispatch
+//2. Dynamic Dispatch
 // impl trait
 fn do_advanced_trait(){
     for n in get_numbers(100, 1001) {
@@ -773,11 +773,57 @@ fn do_advanced_trait(){
     }
 }
 
+//3. Specifying Placeholder Types in Trait Definitions with Associated Types
+// pub trait Iterator {
+//     type Item;
+
+//     fn next(&mut self) -> Option<Self::Item>;
+// }
+//// Item is the placeholder type.
+/// 
+// 4. Fully Qualified Syntax for Disambiguation: Calling Methods with the Same Name
+
+trait Pilot {
+    fn fly(&self);
+}
+
+trait Wizard {
+    fn fly(&self);
+}
+
+struct Human;
+
+impl Pilot for Human {
+    fn fly(&self) {
+        println!("This is your captain speaking. Pilot！");
+    }
+}
+
+impl Wizard for Human {
+    fn fly(&self) {
+        println!("Wizard, up!");
+    }
+}
+
+impl Human {
+    fn fly(&self) {
+        println!("*waving arms furiously*");
+    }
+}
+
+fn do_advanced_trait2(){
+    let person = Human;
+    Pilot::fly(&person);
+    Wizard::fly(&person);
+    person.fly();
+}
+
 
 fn main() {
    do_init();
    do_static_dispatch();
    do_advanced_trait();
+   do_advanced_trait2();
 
 
    println!("\nStartup Web Server...");
