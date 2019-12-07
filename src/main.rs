@@ -818,13 +818,90 @@ fn do_advanced_trait2(){
     person.fly();
 }
 
+trait Animal {
+    fn baby_name() -> String;
+}
+
+struct Dog;
+
+impl Dog {
+    fn baby_name() -> String {
+        String::from("Spot")
+    }
+}
+
+impl Animal for Dog {
+    fn baby_name() -> String {
+        String::from("puppy")
+    }
+}
+
+fn do_advanced_trait3(){
+    println!("A baby dog is called a {}", Dog::baby_name());
+    println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
+}
+
+trait OutlinePrint: fmt::Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+
+struct PointXY {
+    x: i32,
+    y: i32,
+}
+
+impl OutlinePrint for PointXY {}
+
+impl fmt::Display for PointXY {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+//5. Using Super-traits to Require One Trait’s Functionality Within Another Trait
+fn do_advanced_trait4(){
+    let xy = PointXY{
+        x:10,
+        y:30
+    };
+    xy.outline_print();
+
+}
+
+//6. Using the New-type Pattern to Implement External Traits on External Types
+
+struct Wrapper(Vec<String>);
+
+impl fmt::Display for Wrapper {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
+
+fn do_advanced_trait5(){
+    let w = Wrapper(vec![String::from("Hi, "), String::from("Rust!")]);
+    println!("w = {}", w);
+}
+fn do_trait_dispatch(){
+    do_static_dispatch();
+    do_advanced_trait();
+    do_advanced_trait2();
+    do_advanced_trait3();
+    do_advanced_trait4();
+    do_advanced_trait5();
+}
 
 fn main() {
    do_init();
-   do_static_dispatch();
-   do_advanced_trait();
-   do_advanced_trait2();
-
+   do_trait_dispatch();
 
    println!("\nStartup Web Server...");
    HttpServer::new(|| {
