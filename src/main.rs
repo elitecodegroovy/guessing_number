@@ -890,6 +890,7 @@ fn do_advanced_trait5(){
     let w = Wrapper(vec![String::from("Hi, "), String::from("Rust!")]);
     println!("w = {}", w);
 }
+
 fn do_trait_dispatch(){
     do_static_dispatch();
     do_advanced_trait();
@@ -899,15 +900,56 @@ fn do_trait_dispatch(){
     do_advanced_trait5();
 }
 
+use std::ops::Deref;
+
+struct MyBox<T>(T);
+impl<T> MyBox<T> {
+   fn new(x:T)->MyBox<T>{
+      MyBox(x)
+   }
+}
+impl<T> Deref for MyBox<T> {
+   type Target = T;
+   fn deref(&self) -> &T {
+      &self.0
+   }
+}
+impl<T> Drop for MyBox<T>{
+   fn drop(&mut self){
+      println!("dropping MyBox object from memory... ");
+   }
+}
+
+fn do_smart_pointer(){
+    //1. Using a Box<T> to store data on the heap
+    let x = Box::new(5);
+    println!("Box<T> on the heap , x = {}", x);
+
+    //2. Using Box<T> Like a Reference
+    let x = 5;
+    //let y = &x;
+    let y = Box::new(x);
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+
+    let x = 50;
+    assert_eq!(50, x);
+    MyBox::new(x);
+    MyBox::new("Hello");
+}
+
+
 fn main() {
    do_init();
    do_trait_dispatch();
+   do_smart_pointer();
 
    println!("\nStartup Web Server...");
    HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(index))
-    })
+    })  
         .bind("0.0.0.0:8080")
         .unwrap()
         .run()

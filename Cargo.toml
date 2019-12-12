@@ -25,7 +25,7 @@ debug-assertions = true # controls whether debug assertions are enabled
 codegen-units = 16 # if > 1 enables parallel code generation which improves
                    # compile times, but prevents some optimizations.
                    # Passes `-C codegen-units`.
-panic = 'unwind'   # panic strategy (`-C panic=...`), can also be 'abort'
+panic = 'abort'   # panic strategy (`-C panic=...`), can also be 'abort'
 incremental = true # whether or not incremental compilation is enabled
                    # This can be overridden globally with the CARGO_INCREMENTAL
                    # environment variable or `build.incremental` config
@@ -56,7 +56,7 @@ rpath = false
 lto = false
 debug-assertions = true
 codegen-units = 16
-panic = 'unwind'
+panic = 'abort'
 incremental = true
 overflow-checks = true
 
