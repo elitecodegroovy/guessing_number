@@ -935,7 +935,10 @@ fn do_smart_pointer(){
 
     let x = 50;
     assert_eq!(50, x);
-    MyBox::new(x);
+    let y = MyBox::new(x);
+
+    //drop method.
+    drop(y);
     MyBox::new("Hello");
 }
 
