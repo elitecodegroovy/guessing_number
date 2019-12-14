@@ -43,7 +43,7 @@ rpath = false
 lto = false
 debug-assertions = false
 codegen-units = 16
-panic = 'unwind'
+panic = 'abort'
 incremental = false
 overflow-checks = false
 
@@ -69,7 +69,7 @@ rpath = false
 lto = false
 debug-assertions = false
 codegen-units = 16
-panic = 'unwind'
+panic = 'abort'
 incremental = false
 overflow-checks = false
 
