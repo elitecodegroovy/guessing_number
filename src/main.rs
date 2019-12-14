@@ -164,7 +164,7 @@ fn do_err(){
     use std::fs::File;
     //other way: let f = File::open("hello.txt").unwrap();
     //let f = File::open("hello.txt").expect("Failed to open hello.txt");
-    let f = File::open("readme.md");
+    let f = File::open("README.md");
 
     let f = match f {
         Ok(file) => file,
@@ -646,7 +646,7 @@ fn do_float(){
     string_slice();
     do_struct();
     do_map();
-    do_err();
+    //do_err();
     do_generic();
     do_closure();
     do_smart_p();
