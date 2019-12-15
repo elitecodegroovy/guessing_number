@@ -56,7 +56,6 @@ rpath = false
 lto = false
 debug-assertions = true
 codegen-units = 16
-panic = 'abort'
 incremental = true
 overflow-checks = true
 
@@ -69,10 +68,10 @@ rpath = false
 lto = false
 debug-assertions = false
 codegen-units = 16
-panic = 'abort'
 incremental = false
 overflow-checks = false
 
 [dependencies]
 rand = "0.7.2"
 actix-web = "1.0.8"
+serde = { version = "1.0.101", features = ["derive"] }

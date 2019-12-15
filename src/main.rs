@@ -1,7 +1,8 @@
 use std::io;
 use std::cmp::Ordering;
 use rand::Rng;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer, Responder, HttpResponse};
+use serde::Serialize;
 
 fn index() -> impl Responder {
     let my_string = String::from("Rust Async");
@@ -20,6 +21,22 @@ fn index() -> impl Responder {
     println!(" word: {}", _word);
 
     HttpResponse::Ok().body(_word)
+}
+
+#[derive(Serialize)]
+struct Country {
+    country_code: String,
+    country_name: String
+}
+
+fn get_country_list() -> impl Responder {
+    let mut vec:Vec<Country> = Vec::new();
+ 
+    vec.push(Country{country_code: "PH".to_string(), country_name: "Philippines".to_string()});
+    vec.push(Country{country_code: "MY".to_string(), country_name: "Malaysia".to_string()});
+    vec.push(Country{country_code: "ID".to_string(), country_name: "Indonesia".to_string()});
+ 
+    return web::Json(vec);
 }
 
 fn guess_num(){
@@ -126,6 +143,7 @@ fn do_map(){
         let count = map.entry(word).or_insert(10);
         //println!("word: {}", word);
         *count += 1;
+        println!("count:{}", *count);
     }
 
     println!("{:?}", map);
@@ -636,9 +654,11 @@ fn do_float(){
         print!("{}, ", number);
     }
 
+    //slice
     let s = String::from("The Rust Programming Language");
     let s1 = &s;
     let s2 =&s;
+
     println!("s1: {}, s2: {}", s1, s2);
     let  s3 = &s;
     println!("s3: {}", s3);
@@ -951,11 +971,13 @@ fn main() {
    println!("\nStartup Web Server...");
    HttpServer::new(|| {
         App::new()
-            .route("/", web::get().to(index))
+                .route("/", web::get().to(index))
+            .service(web::resource("/countries")
+                .route(web::get().to(get_country_list)))
     })  
         .bind("0.0.0.0:9090")
         .unwrap()
         .run()
         .unwrap();
-    println!("exit");
+    println!(">>>exit");
 }
