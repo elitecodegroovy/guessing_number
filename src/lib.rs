@@ -86,9 +86,11 @@ pub fn run_shoes_test(){
             Shoe { size: 10, style: String::from("boot") },
         ]
     );
-    let c = CustomSmartPointer { data: String::from("my stuff") };
-    let d = CustomSmartPointer { data: String::from("other stuff") };
-    println!("CustomSmartPointers created.");
+    {
+        let c = CustomSmartPointer { data: String::from("my stuff") };
+        let d = CustomSmartPointer { data: String::from("other stuff") };
+        println!("CustomSmartPointers created.");
+    }
 
     let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
     println!("count after creating a = {}", Rc::strong_count(&a));

@@ -480,6 +480,7 @@ fn do_concurrency2(){
     use std::thread;
     use std::sync::mpsc;
     use std::time::Duration;
+    //VIP: producer and consumer model
     let (tx, rx) = mpsc::channel();
 
     let tx1 = mpsc::Sender::clone(&tx);
