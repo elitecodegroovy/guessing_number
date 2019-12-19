@@ -963,22 +963,68 @@ fn do_smart_pointer(){
     MyBox::new("Hello");
 }
 
+fn startup_web_server(){
+    println!("\nStartup Web Server...");
+    HttpServer::new(|| {
+         App::new()
+                 .route("/", web::get().to(index))
+             .service(web::resource("/countries")
+                 .route(web::get().to(get_country_list)))
+     })  
+         .bind("0.0.0.0:9090")
+         .unwrap()
+         .run()
+         .unwrap();
+     println!(">>>exit");
+}
+
+use std::io::prelude::*;
+use std::net::TcpStream;
+use std::string::String;
+static HTML: &str = "<!DOCTYPE html><html lang=\"en\"> <head><meta charset=\"utf-8\"><title>Hello!</title></head><body> <h1>Hello!</h1> <p>Hi from Rust</p></body></html>";
+
+fn handle_connection(mut stream: TcpStream) {
+    let mut buffer = [0; 512];
+
+    stream.read(&mut buffer).unwrap();
+
+    let get = b"GET / HTTP/1.1\r\n";
+
+    let (status_line, content) = if buffer.starts_with(get) {
+        ("HTTP/1.1 200 OK\r\n\r\n", HTML)
+    } else {
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "404.....")
+    };
+
+    let response = format!("{}{}", status_line, content);
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+}
+
+
+fn startup_multiple_threads_server(){
+    use std::net::TcpListener;
+    use guessing_number::ThreadPool;
+
+    let pool = ThreadPool::new(4);
+    let listener = TcpListener::bind("0.0.0.0:7878").unwrap();
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        println!("req ...");
+        pool.execute(|| {
+            handle_connection(stream);
+        });
+    }
+}
 
 fn main() {
    do_init();
    do_trait_dispatch();
    do_smart_pointer();
 
-   println!("\nStartup Web Server...");
-   HttpServer::new(|| {
-        App::new()
-                .route("/", web::get().to(index))
-            .service(web::resource("/countries")
-                .route(web::get().to(get_country_list)))
-    })  
-        .bind("0.0.0.0:9090")
-        .unwrap()
-        .run()
-        .unwrap();
-    println!(">>>exit");
+   //startup_multiple_threads_server();
+   //startup_web_server();
 }
