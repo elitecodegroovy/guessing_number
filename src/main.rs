@@ -1,8 +1,8 @@
-use std::io;
-use std::cmp::Ordering;
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use rand::Rng;
-use actix_web::{web, App, HttpServer, Responder, HttpResponse};
 use serde::Serialize;
+use std::cmp::Ordering;
+use std::io;
 
 fn index() -> impl Responder {
     let my_string = String::from("Rust Async");
@@ -26,32 +26,42 @@ fn index() -> impl Responder {
 #[derive(Serialize)]
 struct Country {
     country_code: String,
-    country_name: String
+    country_name: String,
 }
 
 fn get_country_list() -> impl Responder {
-    let mut vec:Vec<Country> = Vec::new();
- 
-    vec.push(Country{country_code: "PH".to_string(), country_name: "Philippines".to_string()});
-    vec.push(Country{country_code: "MY".to_string(), country_name: "Malaysia".to_string()});
-    vec.push(Country{country_code: "ID".to_string(), country_name: "Indonesia".to_string()});
- 
+    let mut vec: Vec<Country> = Vec::new();
+
+    vec.push(Country {
+        country_code: "PH".to_string(),
+        country_name: "Philippines".to_string(),
+    });
+    vec.push(Country {
+        country_code: "MY".to_string(),
+        country_name: "Malaysia".to_string(),
+    });
+    vec.push(Country {
+        country_code: "ID".to_string(),
+        country_name: "Indonesia".to_string(),
+    });
+
     return web::Json(vec);
 }
 
-fn guess_num(){
+fn guess_num() {
     println!("Guess the number!");
     let secret_number = rand::thread_rng().gen_range(1, 101);
 
-    loop{
+    loop {
         println!("Please input your guess.");
 
         let mut guess = String::new();
 
-        io::stdin().read_line(&mut guess)
+        io::stdin()
+            .read_line(&mut guess)
             .expect("Failed to read line");
 
-        let guess: u32 = match guess.trim().parse(){
+        let guess: u32 = match guess.trim().parse() {
             Ok(num) => num,
             Err(_) => continue,
         };
@@ -71,7 +81,7 @@ fn guess_num(){
     println!("The secret number is: {}", secret_number);
 }
 
-fn do_compound(){
+fn do_compound() {
     let x: (i32, f64, u8) = (500, 6.4, 1);
 
     let five_hundred = x.0;
@@ -79,7 +89,10 @@ fn do_compound(){
     let six_point_four = x.1;
 
     let one = x.2;
-    println!("five_hundred: {}, six_point_four:{}, other:{}", five_hundred, six_point_four, one);
+    println!(
+        "five_hundred: {}, six_point_four:{}, other:{}",
+        five_hundred, six_point_four, one
+    );
 
     let a: [i32; 5] = [1, 2, 3, 4, 5];
     println!(" Array element :{}", a[0]);
@@ -97,7 +110,7 @@ fn first_word(s: &str) -> &str {
     &s[..]
 }
 
-fn string_slice(){
+fn string_slice() {
     let my_string = String::from("Rust Async");
 
     // first_word works on slices of `String`s
@@ -116,12 +129,12 @@ fn string_slice(){
 
 use std::collections::HashMap;
 
-fn do_map(){
+fn do_map() {
     let mut map = HashMap::new();
     map.insert(1, 2);
     println!("map :{:?}", map);
 
-    let teams  = vec![String::from("Blue"), String::from("Yellow")];
+    let teams = vec![String::from("Blue"), String::from("Yellow")];
     let initial_scores = vec![10, 50];
 
     let mut scores: HashMap<_, _> = teams.iter().zip(initial_scores.iter()).collect();
@@ -132,8 +145,7 @@ fn do_map(){
     }
     let team_name = String::from("Blue");
 
-    println!{"team name : {:?}", scores.get(&team_name)};
-
+    println! {"team name : {:?}", scores.get(&team_name)};
 
     let text = "hello world wonderful world";
 
@@ -162,7 +174,7 @@ fn do_map(){
     do_string();
 }
 
-fn do_string(){
+fn do_string() {
     let s1 = String::from("tic");
     let s2 = String::from("tac");
     let s3 = String::from("toe");
@@ -170,15 +182,15 @@ fn do_string(){
     println!("s: {}", s);
 
     let s4 = String::from("suffix!");
-    let  s = format!("{}-{}-{}", s2, s3, s4);
+    let s = format!("{}-{}-{}", s2, s3, s4);
     println!("s: {}", s);
     //.bytes()   //raw number
-//    for c in s.chars() {
-//        println!("{}", c);
-//    }
+    //    for c in s.chars() {
+    //        println!("{}", c);
+    //    }
 }
 
-fn do_err(){
+fn do_err() {
     use std::fs::File;
     //other way: let f = File::open("hello.txt").unwrap();
     //let f = File::open("hello.txt").expect("Failed to open hello.txt");
@@ -186,9 +198,7 @@ fn do_err(){
 
     let f = match f {
         Ok(file) => file,
-        Err(error) => {
-            panic!("Problem opening the file: {:?}", error)
-        },
+        Err(error) => panic!("Problem opening the file: {:?}", error),
     };
 
     //A Shortcut for Propagating Errors: the ? Operator
@@ -208,7 +218,7 @@ fn largest(list: &[i32]) -> i32 {
 
 //Another way we could implement largest is for the function to
 // return a reference to a T value in the slice. I
-fn get_gt<T: PartialOrd + Copy >(list: &[T]) -> T {
+fn get_gt<T: PartialOrd + Copy>(list: &[T]) -> T {
     let mut largest = list[0];
 
     for &item in list.iter() {
@@ -234,7 +244,7 @@ impl<T, U> Point<T, U> {
     }
 }
 
-fn do_trait(){
+fn do_trait() {
     let number_list = vec![34, 50, 25, 100, 65];
 
     let result = get_gt(&number_list);
@@ -246,7 +256,7 @@ fn do_trait(){
     println!("The largest char is {}", result);
 }
 
-fn do_generic(){
+fn do_generic() {
     let number_list = vec![34, 50, 25, 100, 65];
 
     let result = largest(&number_list);
@@ -258,7 +268,7 @@ fn do_generic(){
     println!("The largest number is {}", result);
 
     let p1 = Point { x: 5, y: 10.4 };
-    let p2 = Point { x: "Hello", y: 'c'};
+    let p2 = Point { x: "Hello", y: 'c' };
 
     let p3 = p1.mixup(p2);
 
@@ -266,7 +276,7 @@ fn do_generic(){
     do_trait()
 }
 
-fn do_closure(){
+fn do_closure() {
     let v1 = vec![1, 2, 3];
 
     let v1_iter = v1.iter();
@@ -285,7 +295,7 @@ fn do_closure(){
     guessing_number::calling_next_directly();
 }
 
-fn do_smart_p(){
+fn do_smart_p() {
     let x = 5;
     let y = &x;
 
@@ -299,11 +309,11 @@ fn do_smart_p(){
     assert_eq!(5, *y1);
 }
 
-fn do_concurrency(){
+fn do_concurrency() {
     use std::thread;
     use std::time::Duration;
 
-    let handle =thread::spawn(|| {
+    let handle = thread::spawn(|| {
         for i in 1..6 {
             println!("hi number {} from the spawned thread!", i);
             thread::sleep(Duration::from_millis(1));
@@ -319,9 +329,9 @@ fn do_concurrency(){
     do_concurrency1();
 }
 
-fn do_concurrency1(){
-    use std::thread;
+fn do_concurrency1() {
     use std::sync::mpsc;
+    use std::thread;
     use std::time::Duration;
     let (tx, rx) = mpsc::channel();
 
@@ -335,7 +345,7 @@ fn do_concurrency1(){
 
         for val in vals {
             tx.send(val).unwrap();
-//            thread::sleep(Duration::from_secs(1));
+            //            thread::sleep(Duration::from_secs(1));
         }
     });
 
@@ -347,12 +357,11 @@ fn do_concurrency1(){
     do_match()
 }
 
-fn do_match_p(){
+fn do_match_p() {
     println!("one");
 }
 
-
-fn do_match(){
+fn do_match() {
     let x = 1;
 
     match x {
@@ -410,22 +419,13 @@ fn do_match(){
 
     match msg {
         Message::ChangeColor(Color::Rgb(r, g, b)) => {
-            println!(
-                "Change the color to red {}, green {}, and blue {}",
-                r,
-                g,
-                b
-            )
-        },
-        Message::ChangeColor(Color::Hsv(h, s, v)) => {
-            println!(
-                "Change the color to hue {}, saturation {}, and value {}",
-                h,
-                s,
-                v
-            )
+            println!("Change the color to red {}, green {}, and blue {}", r, g, b)
         }
-        _ => ()
+        Message::ChangeColor(Color::Hsv(h, s, v)) => println!(
+            "Change the color to hue {}, saturation {}, and value {}",
+            h, s, v
+        ),
+        _ => (),
     }
 
     //bind
@@ -435,30 +435,25 @@ fn do_match(){
 }
 
 //Rust unsafe code demo
-fn do_unsafe(){
+fn do_unsafe() {
     //doesn’t enforce these memory safety guarantees.
     //Gaining extra superpowers.
     //You can take four actions in unsafe Rust
-        //Dereference a raw pointer
-        //Call an unsafe function or method
-        //Access or modify a mutable static variable
-        //Implement an unsafe trait
-
+    //Dereference a raw pointer
+    //Call an unsafe function or method
+    //Access or modify a mutable static variable
+    //Implement an unsafe trait
 }
 
-fn do_match1(){
+fn do_match1() {
     let msg = MessageNum::Hello { id: 5 };
 
     match msg {
-        MessageNum::Hello { id: id_variable @ 3...7 } => {
-            println!("Found an id in range: {}", id_variable)
-        },
-        MessageNum::Hello { id: 10...12 } => {
-            println!("Found an id in another range")
-        },
-        MessageNum::Hello { id } => {
-            println!("Found some other id: {}", id)
-        },
+        MessageNum::Hello {
+            id: id_variable @ 3...7,
+        } => println!("Found an id in range: {}", id_variable),
+        MessageNum::Hello { id: 10...12 } => println!("Found an id in another range"),
+        MessageNum::Hello { id } => println!("Found some other id: {}", id),
     }
 }
 enum MessageNum {
@@ -476,9 +471,9 @@ enum Message {
     ChangeColor(Color),
 }
 //Similarities Between RefCell<T>/Rc<T> and Mutex<T>/Arc<T>
-fn do_concurrency2(){
-    use std::thread;
+fn do_concurrency2() {
     use std::sync::mpsc;
+    use std::thread;
     use std::time::Duration;
     //VIP: producer and consumer model
     let (tx, rx) = mpsc::channel();
@@ -517,8 +512,8 @@ fn do_concurrency2(){
     }
 }
 
-fn do_concurrency3(){
-    use std::sync::{Mutex, Arc};
+fn do_concurrency3() {
+    use std::sync::{Arc, Mutex};
     use std::thread;
 
     let counter = Arc::new(Mutex::new(0));
@@ -561,7 +556,7 @@ trait Quack {
     fn quack(&self);
 }
 
-struct Duck ();
+struct Duck();
 
 impl Quack for Duck {
     fn quack(&self) {
@@ -570,12 +565,12 @@ impl Quack for Duck {
 }
 
 struct RandomBird {
-    is_a_parrot: bool
+    is_a_parrot: bool,
 }
 
 impl Quack for RandomBird {
     fn quack(&self) {
-        if ! self.is_a_parrot {
+        if !self.is_a_parrot {
             println!("quack!");
         } else {
             println!("squawk!");
@@ -587,7 +582,7 @@ impl Quack for RandomBird {
 impl Quack for i32 {
     fn quack(&self) {
         for i in 0..*self {
-            print!("quack {} ",i);
+            print!("quack {} ", i);
         }
         println!();
     }
@@ -608,13 +603,13 @@ impl Name for Toy {
     }
 }
 
-fn quack(){
+fn quack() {
     let duck1 = Duck();
-    let duck2 = RandomBird{is_a_parrot: false};
-    let parrot = RandomBird{is_a_parrot: true};
+    let duck2 = RandomBird { is_a_parrot: false };
+    let parrot = RandomBird { is_a_parrot: true };
     let i = 4;
 
-    let ducks: Vec<&Quack> = vec![&duck1,&duck2,&parrot, &i];
+    let ducks: Vec<&Quack> = vec![&duck1, &duck2, &parrot, &i];
 
     for d in &ducks {
         d.quack();
@@ -624,19 +619,18 @@ fn quack(){
     assert_eq!(t.upper_case(), "TOY".to_string());
 }
 
-
-fn do_oop(){
+fn do_oop() {
     let nvalue = Box::new(78);
     let fvalue = Box::new(98.88);
     let vc: Vec<Box<Show>> = vec![nvalue, fvalue];
     for d in &vc {
-        println!("show {}",d.show());
+        println!("show {}", d.show());
     }
     //oop interface
     quack();
 }
 
-fn do_float(){
+fn do_float() {
     let x = 2.0; // f64
     let y: f32 = 3.0; // f32
     println!("x:{}, y:{} ", x, y);
@@ -658,10 +652,10 @@ fn do_float(){
     //slice
     let s = String::from("The Rust Programming Language");
     let s1 = &s;
-    let s2 =&s;
+    let s2 = &s;
 
     println!("s1: {}, s2: {}", s1, s2);
-    let  s3 = &s;
+    let s3 = &s;
     println!("s3: {}", s3);
 
     string_slice();
@@ -675,10 +669,8 @@ fn do_float(){
     do_oop();
 }
 
-
-
 fn zero_plus(i: i32) -> i32 {
-     0 + i
+    0 + i
 }
 
 #[derive(Debug)]
@@ -701,30 +693,41 @@ impl Rectangle {
     }
 
     fn square(size: u32) -> Rectangle {
-        Rectangle { width: size, height: size }
+        Rectangle {
+            width: size,
+            height: size,
+        }
     }
 }
 
-
-fn do_struct(){
-    let rect1 = Rectangle { width: 20, height: 50 };
-    let rect2 = Rectangle { width: 10, height: 40 };
-    let rect3 = Rectangle { width: 60, height: 45 };
+fn do_struct() {
+    let rect1 = Rectangle {
+        width: 20,
+        height: 50,
+    };
+    let rect2 = Rectangle {
+        width: 10,
+        height: 40,
+    };
+    let rect3 = Rectangle {
+        width: 60,
+        height: 45,
+    };
 
     println!("rect1 area: {}", rect1.area());
     println!("Can rect1 hold rect2? {}", rect1.can_hold(&rect2));
     println!("Can rect1 hold rect3? {}", rect1.can_hold(&rect3));
 
     println!("rect1: {:?}", &(Rectangle::square(3)));
-//    println!(
-//        "The area of the rectangle is {} square pixels.",
-//        area(&rect1)
-//    );
-//    println!("rect1: {:?}", &rect1);
+    //    println!(
+    //        "The area of the rectangle is {} square pixels.",
+    //        area(&rect1)
+    //    );
+    //    println!("rect1: {:?}", &rect1);
 }
 
-fn do_init(){
-     //mut and default immutable
+fn do_init() {
+    //mut and default immutable
     let mut i = 0;
     println!("init i :{}", i);
     i = 100;
@@ -750,7 +753,6 @@ fn do_init(){
 
 use std::fmt;
 
-
 fn show_item<T: fmt::Display>(item: T) {
     println!("Item: {}", item);
 }
@@ -772,15 +774,13 @@ impl fmt::Display for AlsoDisplay {
 }
 
 //1. Static Dispatch
-fn do_static_dispatch(){
+fn do_static_dispatch() {
     let a: CanDisplay = CanDisplay;
     let b: AlsoDisplay = AlsoDisplay;
 
-    show_item(a);    // stdout `Item: CanDisplay`
-    show_item(b);    // stdout `Item: AlsoDisplay`
+    show_item(a); // stdout `Item: CanDisplay`
+    show_item(b); // stdout `Item: AlsoDisplay`
 }
-
-
 
 fn get_numbers(a: u32, b: u32) -> impl Iterator<Item = u32> {
     (a..b).filter(|x| x % 100 == 0)
@@ -788,7 +788,7 @@ fn get_numbers(a: u32, b: u32) -> impl Iterator<Item = u32> {
 
 //2. Dynamic Dispatch
 // impl trait
-fn do_advanced_trait(){
+fn do_advanced_trait() {
     for n in get_numbers(100, 1001) {
         print!("{} \t", n);
     }
@@ -801,7 +801,7 @@ fn do_advanced_trait(){
 //     fn next(&mut self) -> Option<Self::Item>;
 // }
 //// Item is the placeholder type.
-/// 
+///
 // 4. Fully Qualified Syntax for Disambiguation: Calling Methods with the Same Name
 
 trait Pilot {
@@ -832,7 +832,7 @@ impl Human {
     }
 }
 
-fn do_advanced_trait2(){
+fn do_advanced_trait2() {
     let person = Human;
     Pilot::fly(&person);
     Wizard::fly(&person);
@@ -857,7 +857,7 @@ impl Animal for Dog {
     }
 }
 
-fn do_advanced_trait3(){
+fn do_advanced_trait3() {
     println!("A baby dog is called a {}", Dog::baby_name());
     println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
 }
@@ -888,13 +888,9 @@ impl fmt::Display for PointXY {
 }
 
 //5. Using Super-traits to Require One Trait’s Functionality Within Another Trait
-fn do_advanced_trait4(){
-    let xy = PointXY{
-        x:10,
-        y:30
-    };
+fn do_advanced_trait4() {
+    let xy = PointXY { x: 10, y: 30 };
     xy.outline_print();
-
 }
 
 //6. Using the New-type Pattern to Implement External Traits on External Types
@@ -907,12 +903,12 @@ impl fmt::Display for Wrapper {
     }
 }
 
-fn do_advanced_trait5(){
+fn do_advanced_trait5() {
     let w = Wrapper(vec![String::from("Hi, "), String::from("Rust!")]);
     println!("w = {}", w);
 }
 
-fn do_trait_dispatch(){
+fn do_trait_dispatch() {
     do_static_dispatch();
     do_advanced_trait();
     do_advanced_trait2();
@@ -925,23 +921,23 @@ use std::ops::Deref;
 
 struct MyBox<T>(T);
 impl<T> MyBox<T> {
-   fn new(x:T)->MyBox<T>{
-      MyBox(x)
-   }
+    fn new(x: T) -> MyBox<T> {
+        MyBox(x)
+    }
 }
 impl<T> Deref for MyBox<T> {
-   type Target = T;
-   fn deref(&self) -> &T {
-      &self.0
-   }
+    type Target = T;
+    fn deref(&self) -> &T {
+        &self.0
+    }
 }
-impl<T> Drop for MyBox<T>{
-   fn drop(&mut self){
-      println!("dropping MyBox object from memory... ");
-   }
+impl<T> Drop for MyBox<T> {
+    fn drop(&mut self) {
+        println!("dropping MyBox object from memory... ");
+    }
 }
 
-fn do_smart_pointer(){
+fn do_smart_pointer() {
     //1. Using a Box<T> to store data on the heap
     let x = Box::new(5);
     println!("Box<T> on the heap , x = {}", x);
@@ -963,19 +959,18 @@ fn do_smart_pointer(){
     MyBox::new("Hello");
 }
 
-fn startup_web_server(){
+fn startup_web_server() {
     println!("\nStartup Web Server...");
     HttpServer::new(|| {
-         App::new()
-                 .route("/", web::get().to(index))
-             .service(web::resource("/countries")
-                 .route(web::get().to(get_country_list)))
-     })  
-         .bind("0.0.0.0:9090")
-         .unwrap()
-         .run()
-         .unwrap();
-     println!(">>>exit");
+        App::new()
+            .route("/", web::get().to(index))
+            .service(web::resource("/countries").route(web::get().to(get_country_list)))
+    })
+    .bind("0.0.0.0:9090")
+    .unwrap()
+    .run()
+    .unwrap();
+    println!(">>>exit");
 }
 
 use std::io::prelude::*;
@@ -1002,10 +997,9 @@ fn handle_connection(mut stream: TcpStream) {
     stream.flush().unwrap();
 }
 
-
-fn startup_multiple_threads_server(){
-    use std::net::TcpListener;
+fn startup_multiple_threads_server() {
     use guessing_number::ThreadPool;
+    use std::net::TcpListener;
 
     let pool = ThreadPool::new(4);
     let listener = TcpListener::bind("0.0.0.0:7878").unwrap();
@@ -1021,10 +1015,10 @@ fn startup_multiple_threads_server(){
 }
 
 fn main() {
-   do_init();
-   do_trait_dispatch();
-   do_smart_pointer();
+    do_init();
+    do_trait_dispatch();
+    do_smart_pointer();
 
-   //startup_multiple_threads_server();
-   //startup_web_server();
+    //startup_multiple_threads_server();
+    //startup_web_server();
 }

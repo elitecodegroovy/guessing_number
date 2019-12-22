@@ -11,9 +11,7 @@ struct Shoe {
 }
 
 fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
-    shoes.into_iter()
-        .filter(|s| s.size == shoe_size)
-        .collect()
+    shoes.into_iter().filter(|s| s.size == shoe_size).collect()
 }
 
 struct CustomSmartPointer {
@@ -45,7 +43,9 @@ pub struct LimitTracker<'a, T: Messenger> {
 }
 
 impl<'a, T> LimitTracker<'a, T>
-    where T: Messenger {
+where
+    T: Messenger,
+{
     pub fn new(messenger: &T, max: usize) -> LimitTracker<T> {
         LimitTracker {
             messenger,
@@ -62,19 +62,30 @@ impl<'a, T> LimitTracker<'a, T>
         if percentage_of_max >= 1.0 {
             self.messenger.send("Error: You are over your quota!");
         } else if percentage_of_max >= 0.9 {
-            self.messenger.send("Urgent warning: You've used up over 90% of your quota!");
+            self.messenger
+                .send("Urgent warning: You've used up over 90% of your quota!");
         } else if percentage_of_max >= 0.75 {
-            self.messenger.send("Warning: You've used up over 75% of your quota!");
+            self.messenger
+                .send("Warning: You've used up over 75% of your quota!");
         }
     }
 }
 
 //entrance point
-pub fn run_shoes_test(){
+pub fn run_shoes_test() {
     let shoes = vec![
-        Shoe { size: 10, style: String::from("sneaker") },
-        Shoe { size: 13, style: String::from("sandal") },
-        Shoe { size: 10, style: String::from("boot") },
+        Shoe {
+            size: 10,
+            style: String::from("sneaker"),
+        },
+        Shoe {
+            size: 13,
+            style: String::from("sandal"),
+        },
+        Shoe {
+            size: 10,
+            style: String::from("boot"),
+        },
     ];
 
     let in_my_size = shoes_in_my_size(shoes, 10);
@@ -82,13 +93,23 @@ pub fn run_shoes_test(){
     assert_eq!(
         in_my_size,
         vec![
-            Shoe { size: 10, style: String::from("sneaker") },
-            Shoe { size: 10, style: String::from("boot") },
+            Shoe {
+                size: 10,
+                style: String::from("sneaker")
+            },
+            Shoe {
+                size: 10,
+                style: String::from("boot")
+            },
         ]
     );
     {
-        let c = CustomSmartPointer { data: String::from("my stuff") };
-        let d = CustomSmartPointer { data: String::from("other stuff") };
+        let c = CustomSmartPointer {
+            data: String::from("my stuff"),
+        };
+        let d = CustomSmartPointer {
+            data: String::from("other stuff"),
+        };
         println!("CustomSmartPointers created.");
     }
 
@@ -137,10 +158,7 @@ pub fn calling_next_directly() {
     assert_eq!(counter.next(), Some(4));
     assert_eq!(counter.next(), Some(5));
     assert_eq!(counter.next(), None);
-
 }
-
-
 
 /// Adds one to the number given.
 ///
@@ -156,7 +174,6 @@ pub fn add_one(x: i32) -> i32 {
     x + 1
 }
 
-
 #[cfg(test)]
 mod tests {
 
@@ -167,15 +184,21 @@ mod tests {
     }
 
     #[test]
-    fn do_holder(){
-        let larger = Rectangle { width: 8, height: 7 };
-        let smaller = Rectangle { width: 5, height: 1 };
+    fn do_holder() {
+        let larger = Rectangle {
+            width: 8,
+            height: 7,
+        };
+        let smaller = Rectangle {
+            width: 5,
+            height: 1,
+        };
 
         assert!(larger.can_hold(&smaller));
     }
 
     #[test]
-    fn test_add(){
+    fn test_add() {
         assert_eq!(4, add_two(2));
 
         assert_ne!(56, add_two(2));
@@ -211,7 +234,9 @@ mod tests {
 
     impl MockMessenger {
         fn new() -> MockMessenger {
-            MockMessenger { sent_messages: RefCell::new(vec![]) }
+            MockMessenger {
+                sent_messages: RefCell::new(vec![]),
+            }
         }
     }
 
@@ -236,11 +261,9 @@ fn internal_adder(a: i32, b: i32) -> i32 {
     a + b
 }
 
-
 pub fn add_two(a: i32) -> i32 {
     a + 2
 }
-
 
 #[derive(Debug)]
 struct Rectangle {
@@ -254,10 +277,10 @@ impl Rectangle {
     }
 }
 
-use std::thread;
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::thread;
 
 trait FnBox {
     fn call_box(self: Box<Self>);
@@ -278,24 +301,19 @@ struct Worker {
 
 impl Worker {
     fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
-        let thread = thread::spawn(move || {
-            loop {
-                let job = receiver.lock().unwrap().recv().unwrap();
+        let thread = thread::spawn(move || loop {
+            let job = receiver.lock().unwrap().recv().unwrap();
 
-                println!("Worker {} got a job; executing.", id);
+            println!("Worker {} got a job; executing.", id);
 
-                job.call_box();
-            }
+            job.call_box();
         });
 
-        Worker {
-            id,
-            thread,
-        }
+        Worker { id, thread }
     }
 }
 
-pub struct ThreadPool{
+pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: mpsc::Sender<Job>,
 }
@@ -314,19 +332,15 @@ impl ThreadPool {
             workers.push(Worker::new(id, Arc::clone(&receiver)));
         }
 
-        ThreadPool {
-            workers,
-            sender,
-        }
+        ThreadPool { workers, sender }
     }
 
     pub fn execute<F>(&self, f: F)
-        where
-            F: FnOnce() + Send + 'static
+    where
+        F: FnOnce() + Send + 'static,
     {
         let job = Box::new(f);
 
         self.sender.send(job).unwrap();
     }
 }
-
