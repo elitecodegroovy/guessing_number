@@ -993,7 +993,7 @@ fn handle_connection(mut stream: TcpStream) {
 
     let response = format!("{}{}", status_line, content);
 
-    stream.write(response.as_bytes()).unwrap();
+    stream.write_all(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
 
