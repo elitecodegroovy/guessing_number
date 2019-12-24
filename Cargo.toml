@@ -59,6 +59,7 @@ codegen-units = 16
 incremental = true
 overflow-checks = true
 
+
 # The benchmarking profile, used for `cargo bench` (and the test targets and
 # unit tests for `cargo test --release`).
 [profile.bench]
